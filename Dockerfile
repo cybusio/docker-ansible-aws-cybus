@@ -43,7 +43,7 @@ COPY --from=builder /usr/lib/python3.6/site-packages/ /usr/lib/python3.6/site-pa
 COPY --from=builder /usr/bin/docker /usr/bin/docker
 COPY --from=builder /usr/bin/docker-compose /usr/bin/docker-compose
 
-RUN ansible-galaxy collection install cybus.connectware:${ANSIBLE_CONNECTWARE_COLLECTION_VERSION:-1.0.4}
+RUN ansible-galaxy collection install cybus.connectware:${ANSIBLE_CONNECTWARE_COLLECTION_VERSION:-1.0.5}
 
 WORKDIR /data
 ENTRYPOINT ["/docker-entrypoint.sh"]

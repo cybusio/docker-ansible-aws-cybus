@@ -35,22 +35,10 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 
 Define a proper playbook and provide a cybus license key in order to be able to
 download the required docker image for a Connectware or Connectware Agent instance.
+(skip the AWS settings, if the playbook does not use AWS cloud resources for provisioning)
 
 ```
 docker run --rm -v $(pwd):/data \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -e CONNECTWARE_LICENSE=${CONNECTWARE_LICENSE} \
-   jforge/ansible-aws-cybus:latest \
-  ansible-playbook $PLAYBOOK_FILE
-```
-
-Or in case of a Cybus infrastructure twin profile defined in some `$INFRASTRUCTURE_DEFINITION_FILE`:
-which is used to create host lists dynamically:
-
-```
-docker run --rm -v $(pwd):/data \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v $INFRASTRUCTURE_DEFINITION_FILE:/data/infrastructure.yml \
   -e CONNECTWARE_LICENSE=$CONNECTWARE_LICENSE \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
@@ -65,15 +53,11 @@ docker run --rm -v $(pwd):/data \
 - name: Build Inventory for Connectware instances
   hosts: localhost
   tasks:
-    - name: "Include variables from infrastructure definition file"
-      include_vars:
-        file: "/data/infrastructure.yml"
-        name: infrastructure_info
     - name: "Gather Cybus EC2 facts for Connectware deployment"
       ec2_instance_info:
         region: eu-central-1
         filters:
-          tag:aws:cloudformation:stack-name: '{{ infrastructure_info.hosts.selectors[0].value }}'
+          tag:aws:cloudformation:stack-name: 'Connectware-My-IIot-Gateway'
           instance-state-name: 'running'
       register: ec2_instances_json
     - name: "Adding hosts from EC2 instance filter"
@@ -91,8 +75,7 @@ docker run --rm -v $(pwd):/data \
 - name: Connectware Infrastructure Twin Playbook
   hosts: ec2_hosts
   vars:
-    CONNECTWARE_VERSION: 1.0.22
-    CONNECTWARE_PASSWORD: admin
+    CONNECTWARE_VERSION: 1.0.25
     CONNECTWARE_LICENSE: "{{ lookup('env','CONNECTWARE_LICENSE') }}"
   tasks:
     - name: "Install connectware"
@@ -121,40 +104,11 @@ docker run --rm -v $(pwd):/data \
     CONNECTWARE_LICENSE: "{{ lookup('env','CONNECTWARE_LICENSE') }}"
     CONNECTWARE_AGENT_ABSENT_KEEP_VOLUMES: yes
   tasks:
-    - name: Undeploy Connectware Agent
-      include_role:
-        name: cybus.connectware.agent_absent
-      vars:
-        CONNECTWARE_AGENT_COMPOSE_FILE_PATH: local-agent
     - name: Deploy Connectware Agent
       include_role:
         name: cybus.connectware.agent_started
       vars:
         CONNECTWARE_AGENT_COMPOSE_FILE_PATH: local-agent
-```
-
-## Example content of an infrastructure profile
- 
-Use static hosts or any strategy for dynamic host lists with this image.
-
-This example is used at Cybus for some use cases to get access to ec2 instances 
-dynamically deployed on-demand.
-It simply provides some yaml to identify EC2 instances by AWS CDK stack names:
-
-```
-hosts:
-  type: "aws-ec2"
-  selectors:
-    - vpc: "public"
-      artifact: "connectware"
-      type: "Filter"
-      key: "tag:aws:cloudformation:stack-name"
-      value: "Connectware-My-IIot-Gateway"
-    - vpc: "private"
-      artifact: "connectware agent"
-      type: "Filter"
-      key: "tag:aws:cloudformation:stack-name"
-      value: "Connectware-My-Agent"
 ```
 
 # References
