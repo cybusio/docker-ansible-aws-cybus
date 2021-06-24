@@ -6,8 +6,7 @@ Contains Ansible, the Cybus Connectware Ansible Collection, AWS CLI and Boto lib
 Docker-in-Docker, docker-compose and some tools recognized as useful in practice.
 with Ansible, AWS CLI, DinD, Docker-Compose and Cybus Ansible Collection
 
-
-# Objective
+## Objective
 
 Create a docker image to support provisioning of Cybus Connectware or Connectware Agents
 using Ansible. 
@@ -15,7 +14,7 @@ Contains the [Cybus Ansible Galaxy Collection](https://galaxy.ansible.com/cybus/
 uses [Cytopia/ansible:aws](https://github.com/cytopia/docker-ansible/blob/master/Dockerfiles/Dockerfile-aws)
 as a base image and supports provisioning with dynamic host lists based on AWS resources.
 
-# Build
+## Build
 
 To build the image manually execute (optionally set build-args as listed on top of the Dockerfile):
 
@@ -31,7 +30,7 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
   /bin/sh -c "docker version && docker-compose version"
 ```
 
-# Usage
+## Usage
 
 Define a proper playbook and provide a cybus license key in order to be able to
 download the required docker image for a Connectware or Connectware Agent instance.
@@ -46,7 +45,7 @@ docker run --rm -v $(pwd):/data \
   ansible-playbook $PLAYBOOK_FILE
 ```
 
-## Example playbook for Connectware provisioning
+### Example playbook for Connectware provisioning
 
 ```
 # Ansible Playbook for Connectware deployment onto a prepared EC2 instance.
@@ -75,7 +74,7 @@ docker run --rm -v $(pwd):/data \
 - name: Connectware Infrastructure Twin Playbook
   hosts: ec2_hosts
   vars:
-    CONNECTWARE_VERSION: 1.0.25
+    CONNECTWARE_VERSION: 1.0.45
     CONNECTWARE_LICENSE: "{{ lookup('env','CONNECTWARE_LICENSE') }}"
   tasks:
     - name: "Install connectware"
@@ -95,7 +94,7 @@ docker run --rm -v $(pwd):/data \
           machineTopic: machineData
 ```
 
-## Example playbook for Connectware Agent provisioning
+### Example playbook for Connectware Agent provisioning
 
 ```
 - name: Connectware Agent Local
@@ -111,7 +110,7 @@ docker run --rm -v $(pwd):/data \
         CONNECTWARE_AGENT_COMPOSE_FILE_PATH: local-agent
 ```
 
-# References
+## References
 
 - [Cybus](https://cybus.io)
 - [Cybus Ansible Galaxy Collection](https://galaxy.ansible.com/cybus/connectware)
