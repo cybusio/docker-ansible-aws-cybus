@@ -48,7 +48,7 @@ COPY --from=builder /usr/bin/docker-compose /usr/bin/docker-compose
 # add mqtt tools
 RUN pip3 install paho-mqtt
 RUN apk add mosquitto mosquitto-clients jq yq
-RUN ansible-galaxy collection install community.general cybus.connectware:${ANSIBLE_CONNECTWARE_COLLECTION_VERSION:-2.0.13}
+RUN ansible-galaxy collection install community.general amazon.aws cybus.connectware:${ANSIBLE_CONNECTWARE_COLLECTION_VERSION:-2.0.13} 
 
 WORKDIR /data
 ENTRYPOINT ["/docker-entrypoint.sh"]
