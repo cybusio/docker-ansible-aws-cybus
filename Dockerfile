@@ -29,7 +29,6 @@ RUN set -eux \
 	&& pip3 install --no-cache-dir --no-compile \
     docker \
     jsondiff \
-    boto3 \
 	&& find /usr/lib/ -name '__pycache__' -print0 | xargs -0 -n1 rm -rf \
 	&& find /usr/lib/ -name '*.pyc' -print0 | xargs -0 -n1 rm -rf
 
@@ -44,7 +43,7 @@ COPY --from=builder /usr/lib/python3.10/site-packages/ /usr/lib/python3.10/site-
 COPY --from=builder /usr/bin/docker /usr/bin/docker
 
 # add mqtt and json/yaml tools
-RUN pip3 install paho-mqtt
+RUN pip3 install paho-mqtt boto3
 RUN apk add mosquitto mosquitto-clients jq yq
 RUN ansible-galaxy collection install community.general amazon.aws cybus.connectware:${ANSIBLE_CONNECTWARE_COLLECTION_VERSION:-2.2.1}
 
