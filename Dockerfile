@@ -35,15 +35,15 @@ RUN set -eux \
 # --------------------------------------------------------------------------------------------------
 # Final Image
 # --------------------------------------------------------------------------------------------------
-FROM cytopia/ansible:${ANSIBLE_VERSION:-latest}-${ANSIBLE_VERSION:-awshelm3.9} AS production
+FROM cytopia/ansible:${ANSIBLE_VERSION:-latest}-${ANSIBLE_VERSION:-awshelm3.10} AS production
 
 LABEL maintainer="jforge <github@jforge.de>"
 
 COPY --from=builder /usr/lib/python3.10/site-packages/ /usr/lib/python3.10/site-packages/
 COPY --from=builder /usr/bin/docker /usr/bin/docker
 
-# add mqtt and json/yaml tools
-RUN pip3 install paho-mqtt boto3
+# add mqtt and json/yaml tools & upgrade ansible 
+RUN pip3 install paho-mqtt boto3 ansible --upgrade
 RUN apk add mosquitto mosquitto-clients jq yq
 RUN ansible-galaxy collection install community.general amazon.aws cybus.connectware:${ANSIBLE_CONNECTWARE_COLLECTION_VERSION:-2.2.1}
 
