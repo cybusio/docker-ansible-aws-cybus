@@ -110,6 +110,14 @@ docker run --rm -v $(pwd):/data \
         CONNECTWARE_AGENT_COMPOSE_FILE_PATH: local-agent
 ```
 
+## Tool versions
+
+List the versions of the contained tools with:
+
+```bash
+docker run --rm -it jforge/ansible-aws-cybus:latest /bin/bash -c 'ansible --version | grep "python version" && python --version && python3 --version && pip3 --version && pip --version && pip list | grep boto && pip3 list | grep boto'
+```
+
 ## References
 
 - [Cybus](https://cybus.io)
