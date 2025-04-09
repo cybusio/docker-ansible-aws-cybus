@@ -1,11 +1,10 @@
 ARG ANSIBLE_VERSION
-ARG ANSIBLE_CONNECTWARE_COLLECTION_VERSION
 ARG AWS
 
 # --------------------------------------------------------------------------------------------------
 # Builder Image
 # --------------------------------------------------------------------------------------------------
-FROM alpine:3.20 AS builder
+FROM alpine:3.21.3 AS builder
 
 # Required tools for building Python packages
 RUN set -eux \
@@ -64,7 +63,7 @@ COPY --from=builder /usr/bin/docker /usr/bin/docker
 # add mqtt and json/yaml tools & upgrade ansible 
 RUN pip3 install paho-mqtt boto3 ansible --upgrade
 RUN apk add mosquitto mosquitto-clients jq yq
-RUN ansible-galaxy collection install community.general amazon.aws cybus.connectware:${ANSIBLE_CONNECTWARE_COLLECTION_VERSION:-2.2.3}
+RUN ansible-galaxy collection install community.general amazon.aws cybus.connectware:2.3.0
 
 WORKDIR /data
 ENTRYPOINT ["/docker-entrypoint.sh"]

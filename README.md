@@ -18,9 +18,18 @@ as a base image and supports provisioning with dynamic host lists based on AWS r
 
 To build the image manually execute (optionally set build-args as listed on top of the Dockerfile):
 
+```bash
+docker buildx build \
+  --attest type=provenance,mode=max --sbom=true \
+  --platform linux/amd64,linux/arm64 \
+  -t jforge/ansible-aws-cybus . --push
 ```
-docker build --no-cache -t jforge/ansible-aws-cybus .
+
+Push attestation for a cleaner docker scout report:
+```bash
+docker scout push --org jforge jforge/ansible-aws-cybus
 ```
+
 
 Test proper docker and docker-compose availability:
 
@@ -115,7 +124,8 @@ docker run --rm -v $(pwd):/data \
 List the versions of the contained tools with:
 
 ```bash
-docker run --rm -it jforge/ansible-aws-cybus:latest /bin/bash -c 'ansible --version | grep "python version" && python --version && python3 --version && pip3 --version && pip --version && pip list | grep boto && pip3 list | grep boto'
+docker run --rm -it jforge/ansible-aws-cybus:latest /bin/bash -c \
+  'ansible --version | grep "python version" && python --version && python3 --version && pip3 --version && pip --version && pip list | grep boto && pip3 list | grep boto && ansible-galaxy collection list | grep cybus.connectware'
 ```
 
 ## References
